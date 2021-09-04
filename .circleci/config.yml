@@ -1,0 +1,132 @@
+class User():
+#Class Def
+    def __init__(self, name, pin, password):
+        """Initialize the user"""
+        self.name = name
+        self.pin = pin
+        self.password = password
+    
+    # Change the name of the user
+    def change_name(self, name):
+        
+        self.name = name
+    
+    def change_pin(self, pin):
+        """Change the pin of the user"""
+        self.pin = pin
+
+    def change_password(self, password):
+        """Change the password of the user"""
+        self.password = password
+
+    
+class BankUser(User):
+  def __init__(self, name, pin, password):
+    """Initialize the user"""
+    super().__init__(name, pin, password)
+    self.balance = 0
+  
+  def __str__(self):
+    """Return a string representation of the user"""
+    return "Name: {}\nPIN: {}\nPassword: {}\nBalance: {}".format(self.name, self.pin, self.password, self.balance)
+
+  def deposit(self, amount):
+    """Add an amount to the balance"""
+    self.balance += amount
+  
+  def withdraw(self, amount):
+    """Subtract an amount from the balance"""
+    self.balance -= amount
+  
+  def get_balance(self):
+    """Return the balance"""
+    return self.balance 
+
+  def show_balance(self):
+    """Print the balance"""
+    print(self.name, " balance is: {}".format(self.balance))
+  
+  def transfer_money(self, amount, other_user):
+    """Transfer an amount of money to another user"""
+    print(f"You are transfering ${amount} to {other_user.name}")
+    print("Authentication required")
+    pin = int(input("Enter your PIN: "))
+    if self.pin == pin:
+      if self.get_balance() >= amount:
+        self.withdraw(amount)
+        other_user.deposit(amount)
+        print("Transfer authorized")
+        print(f"Transferring ${amount} to {other_user.name}")
+        return True
+      else:
+        print("Insufficient funds.")
+        return False
+    else:
+      print("Invalid PIN.Transaction canceled")
+      return False
+
+  def request_money(self, amount, other_user):
+    """Request an amount of money from another user"""
+    print(f"You are requesting {amount} from {other_user.name}")
+    print("User Authentication is required...")
+    pin = int(input(f"Enter ${other_user.name}'s PIN: "))
+    if other_user.pin == pin:
+      password = input(f"Enter your password: ")
+      if password == self.password:
+        if other_user.get_balance() >= amount:
+          self.deposit(amount)
+          other_user.withdraw(amount)
+          print("Request authorized")
+          print(f"{other_user.name} sent ${amount}")
+          return True
+        else:
+          print("Insufficient funds.")
+          return False
+      else:
+        print("Invalid password.")
+        return False
+    print("Invalid PIN. Transaction canceled")
+    return False
+   
+
+# """ Driver Code for Task 1 """
+# user1 = User("Bob", 1234, "password")
+# print(user1)
+
+# """ Driver Code for Task 2 """
+# user1.change_name("Alice")
+# user1.change_password("password2")
+# user1.change_pin(5678)
+# print(user1)
+
+""" Driver Code for Task 3"""
+user_bank = BankUser("Bob", 1234, "password")
+print(user_bank)
+
+""" Driver Code for Task 4"""
+# user_bank.show_balance()
+# user_bank.deposit(100)
+# user_bank.withdraw(40)
+# user_bank.show_balance()
+# user_bank.withdraw(30)
+# user_bank.show_balance()
+
+""" Driver Code for Task 5"""
+user_bank2 = BankUser("Anjana", 5678, "passanjana")
+print(user_bank2)
+# user_bank.show_balance()
+
+user_bank.deposit(5000)
+user_bank.show_balance()
+user_bank2.show_balance()
+user_bank.transfer_money(2000, user_bank2)
+user_bank.show_balance()
+user_bank2.show_balance()
+successful = user_bank2.transfer_money(500, user_bank)
+user_bank.show_balance()
+user_bank2.show_balance()
+print()
+if successful:
+    user_bank2.request_money(200, user_bank)
+user_bank2.show_balance()
+user_bank.show_balance()
